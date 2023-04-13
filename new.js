@@ -4,78 +4,14 @@ const inputBox = document.querySelector('.input-area');
 const userInput = document.querySelectorAll('user-input');
 const closeIcon = document.getElementById('close-icon');
 const saveButton = document.querySelector('.input-save-button');
-const items = [
-  {
-      "id": "1",
-      "data": "number",
-      "name": "Bitmap"     
-  },
-  {
-      "id": "2",
-      "data": "number",
-      "name": "Primary account number (PAN)"     
-  },
-  {
-      "id": "3",
-      "data": "number",
-      "name": "Processing Code"     
-  },
-  {
-      "id": "4",
-      "data": "number",
-      "name": "Amount Transaction",
-      "min": 0,
-      "max": 9999999999999
-  },
-  {
-    "id": "934",
-    "data": "select",
-    "multiple": true,
-    "list": [
-        [ 90, "Türkiye" ],
-        [ 49, "Türkiye" ],
-        [ 1, "United Fucl,ingsta amasr" ],
-    ]
-  },
-  {
-      "id": "5",
-      "data": "number",
-      "name": "Amount, settlement"     
-  },
-  {
-      "id": "6",
-      "data": "number",
-      "name": "Amount, cardholder billing"     
-  },
-  {
-      "id": "7",
-      "data": "number",
-      "name": "Transmission date & time"     
-  },
-  {
-      "id": "8",
-      "data": "number",
-      "name": "Amount, cardholder billing fee"     
-  },
-  {
-      "id": "9",
-      "data": "number",
-      "name": "Conversion rate, settlement"     
-  },
-  {
-      "id": "10",
-      "data": "number",
-      "name": "Conversion rate, cardholder billing"     
-  }    
-];
 
 class filterItem {
 
-    constructor(id, name, data, lists) {
+    constructor(id, name, data, options) {
         this.id = id;
         this.name = name;
         this.data = data;
-        this.lists = lists;
+        this.options = options;
     }
 
     selectOperatorType(data) {
@@ -154,8 +90,7 @@ class filterItem {
             const select = document.createElement("select");
             select.classList.add(name, "user-input");
             select.id = "input";
-            //select.appendChild(filter.lists.forEach(e => createSelectOption(e)));
-            for (const element of this.lists) { 
+            for (const element of this.options) { 
                 select.appendChild(this.createSelectOption(element));
             }
 
@@ -217,99 +152,112 @@ class filterItem {
     }
 };
 
-var json = JSON.stringify(items); 
-var filters = JSON.parse(json);
+document.addEventListener('DOMContentLoaded', function intro() 
+{
+    const filters = [ new filterItem(1, "Bitmap", "number"), new filterItem(1, "Amount Transaction", "number"), new filterItem(1, "Processing Code", "text"), new filterItem(1, "City", "multiple", [ "İstanbul", "Ankara", "Adana"])];
 
-const filter = new filterItem(1, "Bitmap", "multiple", ["item1", "item3", "item4"]);
-
-//Parametrenin data type ı belirtilmiyor
-    const newFilter = document.createElement("p");
-    var checkbox = filter.createCheckbox();
-    newFilter.append(checkbox, filter.createLabel());
-    list.appendChild(newFilter);
-    
-    checkbox.addEventListener('change', function() {
-        if (checkbox.checked) 
+    filters.forEach(filter => {
+        if(filter.name.indexOf(' ') !== -1)
         {
-            var link = filter.createLink();
-            
-            link.addEventListener('click', function() {
-                inputBox.className = "input-area-display";
-                filter.createResults(filter.name);
-            
-                if(document.querySelector(`div#${filter.name}`) === null) {
-                    const div = document.createElement("div");
-                    div.id = filter.name;
-                    document.querySelector('.input-list').append(div);
-                
-                    const addButton = filter.createPlusButton();
-                    addButton.addEventListener('click', function(){
-                        const newInput = document.createElement("div");
-                        newInput.className = "input-item";
-                        newInput.style.marginBlock = "5px";
+            filter.name = filter.name.replace(/\s+/g, '');
+        }
+        const newFilter = document.createElement("p");
+        var checkbox = filter.createCheckbox();
+        newFilter.append(checkbox, filter.createLabel());
+        list.appendChild(newFilter);
         
-                        const firstOperator = filter.createOperator("connective", filter.name);
-                        const secondOperator = filter.createOperator(filter.data, filter.name);
-                        const input = filter.createInput(filter.name, filter.data);
-                        
-                        newInput.append(firstOperator, secondOperator, input);                
-                        div.append(newInput);
-                    });
-                
-                    div.append(
-                        filter.createOperator(filter.data, filter.name),
-                        filter.createInput(filter.name, filter.data), 
-                        addButton);
-                
-                    document.querySelector('.input-list').append(div);
-                }
-            });
-            
-            var operator = filter.createOperator("connective");
-            operator.id = filter.name;
-            displaySelection.append(operator);
-        }
-        else 
-        {
-            var items = document.getElementsByClassName(`${filter.name}`);
-            Array.from(items).forEach(function (child) {
-                child.remove();
-            });
-
-            var _items = document.querySelectorAll(`#${filter.name}`);
-            Array.from(_items).forEach(function (child) {
-                child.remove();
-            });
-            
-            var buttons = document.getElementsByClassName("plus-button");
-            Array.from(buttons).forEach(function (child) {
-                child.remove();
-            });
-        }
-    });
-    
-    setTimeout(function () { 
-        saveButton.addEventListener('click', function(){
-            var inputs = document.querySelectorAll(`.${filter.name}.user-input`);
-            var operators = document.querySelectorAll(`#operator.${filter.name}`);
-            var resultLine = document.querySelector(`h6.${filter.name}`);
-
-            resultLine.innerHTML = "";
-            resultLine.innerHTML += '\n <p style="padding-left:10px;">' + operators[0].value + '</p><p style="padding-left:5px;"> <u>' + inputs[0].value + '</p></u>';
-
-            for(i = 1; i <= operators.length/2; i++) 
+        checkbox.addEventListener('change', function() {
+            if (checkbox.checked) 
             {
-                resultLine.innerHTML += '\n <p style="padding-left:10px;">' + operators[2*i-1].value + '</p><p style="font-style: italic; font-weight: 500; padding-left:10px;"> ' + operators[2*i].value + '</p><p style="padding-left:5px;"> <u>' + inputs[i].value + '</p></u>';
+                if(displaySelection.getElementsByTagName('*').length !=  0)
+                {
+                    var operator = filter.createOperator("connective");
+                    operator.id = filter.name;
+                    displaySelection.append(operator);
+                }
+
+                var link = filter.createLink();
+                
+                link.addEventListener('click', function() {
+                    inputBox.className = "input-area-display";
+                    filter.createResults(filter.name);
+                
+                    if(document.querySelector(`div#${filter.name}`) === null) 
+                    {
+                        const div = document.createElement("div");
+                        div.id = filter.name;
+                        document.querySelector('.input-list').append(div);
+                    
+                        const addButton = filter.createPlusButton();
+                        addButton.addEventListener('click', function(){
+                            const newInput = document.createElement("div");
+                            newInput.className = "input-item";
+                            newInput.style.marginBlock = "5px";
+            
+                            const firstOperator = filter.createOperator("connective", filter.name);
+                            const secondOperator = filter.createOperator(filter.data, filter.name);
+                            const input = filter.createInput(filter.name, filter.data);
+                            
+                            newInput.append(firstOperator, secondOperator, input);                
+                            div.append(newInput);
+                        });
+                    
+                        div.append(
+                            filter.createOperator(filter.data, filter.name),
+                            filter.createInput(filter.name, filter.data), 
+                            addButton);
+                    
+                        document.querySelector('.input-list').append(div);
+
+                        closeIcon.addEventListener('click', function() {
+                            div.style.display = "none";
+                        });
+                    }
+                    else
+                    {
+                        document.querySelector(`div#${filter.name}`).style.display = "";
+                    }
+                });
             }
-        });}, 1000);
-    
-    closeIcon.addEventListener('click', function() {
-        inputBox.className = "input-area";
-    });
-    
-    setInterval(function () {
-        var link = document.querySelector(`a.${filter.name}`);
-        link.addEventListener('click', () => {
-            inputBox.className = "input-area-display";
+            else 
+            {
+                var items = document.getElementsByClassName(`${filter.name}`);
+                Array.from(items).forEach(function (child) {
+                    child.remove();
+                });
+
+                var _items = document.querySelectorAll(`#${filter.name}`);
+                Array.from(_items).forEach(function (child) {
+                    child.remove();
+                });
+                
+                var buttons = document.getElementsByClassName("plus-button");
+                Array.from(buttons).forEach(function (child) {
+                    child.remove();
+                });
+            }
         });
-    }, 1000);
+        
+        setTimeout(function () { 
+            saveButton.addEventListener('click', function(){
+                var inputs = document.querySelectorAll(`.${filter.name}.user-input`);
+                var operators = document.querySelectorAll(`#operator.${filter.name}`);
+                var resultLine = document.querySelector(`h6.${filter.name}`);
+
+                if(resultLine != null)
+                {
+                    resultLine.innerHTML = "";
+                    resultLine.innerHTML += '\n <p style="padding-left:10px;">' + operators[0].value + '</p><p style="padding-left:5px;"> <u>' + inputs[0].value + '</p></u>';
+
+                    for(i = 1; i <= operators.length/2; i++) 
+                    {
+                        resultLine.innerHTML += '\n <p style="padding-left:10px;">' + operators[2*i-1].value + '</p><p style="font-style: italic; font-weight: 500; padding-left:10px;"> ' + operators[2*i].value + '</p><p style="padding-left:5px;"> <u>' + inputs[i].value + '</p></u>';
+                    }
+                }
+            });}, 1000);
+        
+        closeIcon.addEventListener('click', function() {
+            inputBox.className = "input-area";
+        });
+    });
+});
