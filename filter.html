@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>  
+        <meta charset="UTF-8">  
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <link rel="stylesheet" href="filter.css">  
+        <title>Fraud Filter</title>
+    </head>
+    <body>
+        <div class="main">  
+            <div class="input-box">  
+                <div class="header">      
+                    <h4 id="heading">Filter</h4>      
+                    <i class="fa fa-xmark"></i>    
+                </div>    
+                <div class="condition-area">      
+                    <div class="condition-header">        
+                        <h4>Please choose the filters</h4>      
+                    </div>  
+                    <div class="filter-area" style="overflow-y:scroll;">
+                    </div>               
+                </div>        
+                <div class="selection-area">      
+                    <div>        
+                        <h4>Edit the filter details</h4>      
+                    </div>      
+                    <div class="display-selections" style="overflow-y:scroll;">      
+                    </div>    
+                </div>  
+                <div class="button-area">      
+                        <button class="button">Cancel</button>      
+                        <button class="button">Next</button>        
+                </div>  
+                <div class="input-area">
+                    <div class="input-header">
+                        <h5>Please type the value</h5> 
+                        <i id="close-icon" class="fa-solid fa-xmark" style="cursor: pointer;"></i>
+                    </div>  
+                    <div class="input-list">
+                    </div>
+                    <div>
+                        <button class="input-save-button"> Save </button>
+                    </div>
+                </div>
+            </div>
+            <div class="display-box">
+                <div class="result-header">
+                    <h4 id="heading"> Chosen items : </h4> 
+                </div>    
+                <div class="result-list"></div>
+            </div>
+        </div>    
+        <script src="new.js"></script>
+        <script src="https://kit.fontawesome.com/6ab68b1a21.js" crossorigin="anonymous"></script>
+    </body>
+</html>
