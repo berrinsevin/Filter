@@ -3,7 +3,8 @@ const list = document.querySelector('.filter-area');
 const inputBox = document.querySelector('.input-area');
 const userInput = document.querySelectorAll('user-input');
 const closeIcon = document.getElementById('close-icon');
-const saveButton = document.querySelector('.input-save-button');
+const saveButton = document.querySelector('.save-button');
+const addButton = document.querySelector('.plus-button');
 
 class filterItem {
 
@@ -12,6 +13,35 @@ class filterItem {
         this.name = name;
         this.data = data;
         this.options = options;
+    }
+
+    createCheckbox() {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        
+        return checkbox;
+    }
+
+    createLabel() {
+        const label = document.createElement("label");
+        label.htmlFor = this.name;
+        label.appendChild(document.createTextNode(this.name));
+
+        return label;
+    }
+
+    createLink() {
+        const newLink = document.createElement("a");
+        newLink.classList.add(this.name, "link");
+        newLink.href = "#";
+        newLink.appendChild(document.createTextNode(this.name));
+
+        const br = document.createElement("span");
+        br.className = this.name;
+        br.innerHTML = "<br/>";
+
+        displaySelection.append(newLink, br);
+        return newLink;
     }
 
     selectOperatorType(data) {
@@ -55,35 +85,6 @@ class filterItem {
         return operator;
     }
 
-    createCheckbox() {
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        
-        return checkbox;
-    }
-
-    createLabel() {
-        const label = document.createElement("label");
-        label.htmlFor = this.name;
-        label.appendChild(document.createTextNode(this.name));
-
-        return label;
-    }
-
-    createLink() {
-        const newLink = document.createElement("a");
-        newLink.classList.add(this.name, "link");
-        newLink.href = "#";
-        newLink.appendChild(document.createTextNode(this.name));
-
-        const br = document.createElement("span");
-        br.className = this.name;
-        br.innerHTML = "<br/>";
-
-        displaySelection.append(newLink, br);
-        return newLink;
-    }
-
     createInput(name, type) {
         if(type == "multiple") 
         {
@@ -108,11 +109,19 @@ class filterItem {
         }
     }
 
-    createPlusButton() {
+    createInputArea() {
+        const inputArea = document.createElement("div");
+        inputArea.className = "input-item";
+        inputArea.style.marginBlock = "5px";
+
+        return inputArea;
+    }
+
+    createDeleteButton() {
         const button = document.createElement("button");
-        button.className = "plus-button";
+        button.className = "delete-button";
         const buttonIcon = document.createElement("i");
-        buttonIcon.className = "fa-duotone fa-plus";
+        buttonIcon.className = "fa fa-trash fa-sm";
         button.appendChild(buttonIcon);
         
         return button;
@@ -186,26 +195,29 @@ document.addEventListener('DOMContentLoaded', function intro()
                     {
                         const div = document.createElement("div");
                         div.id = filter.name;
+                        div.style.position = "relative";
                         document.querySelector('.input-list').append(div);
                     
-                        const addButton = filter.createPlusButton();
                         addButton.addEventListener('click', function(){
-                            const newInput = document.createElement("div");
-                            newInput.className = "input-item";
-                            newInput.style.marginBlock = "5px";
-            
+                            const inputArea = filter.createInputArea();
+
                             const firstOperator = filter.createOperator("connective", filter.name);
                             const secondOperator = filter.createOperator(filter.data, filter.name);
                             const input = filter.createInput(filter.name, filter.data);
+                            const deleteButton = filter.createDeleteButton();
+
+                            deleteButton.addEventListener('click', function() {
+                                inputArea.remove();
+                            });
                             
-                            newInput.append(firstOperator, secondOperator, input);                
-                            div.append(newInput);
+                            inputArea.append(firstOperator, secondOperator, input, deleteButton);                
+                            div.append(inputArea);
                         });
                     
                         div.append(
                             filter.createOperator(filter.data, filter.name),
                             filter.createInput(filter.name, filter.data), 
-                            addButton);
+                            filter.createDeleteButton());
                     
                         document.querySelector('.input-list').append(div);
 
